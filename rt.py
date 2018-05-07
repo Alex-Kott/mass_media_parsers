@@ -1,5 +1,6 @@
 import requests as req
 from bs4 import BeautifulSoup
+import pickle
 
 
 def parse_articles(page):
