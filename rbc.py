@@ -13,7 +13,10 @@ if __name__ == "__main__":
 	for item in data['items']:
 		page_source = req.get(item['fronturl']).text
 		news_page = BeautifulSoup(page_source, "lxml")
-		article_text_container = news_page.find_all(class_="article__text")[0]
+		try:
+			article_text_container = news_page.find_all(class_="article__text")[0]
+		except:
+			continue
 
 		text = ''
 		for p in article_text_container.find_all('p'):
