@@ -12,7 +12,7 @@ def parse_article(url):
 	for p in text_container.find_all("p"):
 		text += p.text
 
-	date = soup.find_all(class_="g-date")[0]
+	date = soup.find_all(class_="g-date")[0].text
 
 	return date, text
 
@@ -33,6 +33,8 @@ if __name__ == "__main__":
 	data = json.loads(r.text)
 	for item in data['matches']:
 		date, text = parse_article(item['url'])
+		# print(date)
+		# print(text, end="________________________________________________________________________")
 		dataset.append({
 			'url': item['url'],
 			'date': date,
