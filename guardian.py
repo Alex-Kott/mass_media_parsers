@@ -2,7 +2,6 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
 import dateparser
-from save_mongo import connect, write_one
 start_url = "https://www.theguardian.com/technology/bitcoin"
 
 
@@ -25,7 +24,6 @@ def get_articles(html):
     # writes dict with keys link, text, title and date of the article, connects to db, writes the dict as doc into the db
     bs = BeautifulSoup(html, "html.parser")
     doc = []
-    db = connect()
     for articles in bs.find_all("a", class_="u-faux-block-link__overlay js-headline-text"):
         link = articles.attrs['href']
         title = articles.text
@@ -35,7 +33,7 @@ def get_articles(html):
         try:
             body = [x.text for x in article.find_all('p')]
         except Exception:
-            pass
+            continue
 
         article_time = bs.find('time', attrs = {'itemprop': 'datePublished'})
         article_date = article_time['datetime'].split('T')[0]
@@ -43,7 +41,6 @@ def get_articles(html):
         date = str(date.date()) 
 
         art = {"link" : link, "title" : title, "issue_date" : date, "text" : body}
-        db.huffpost.save(art)
         doc.append(art)
         print (title, date)
     return doc
@@ -59,7 +56,7 @@ def collect_pages(page):
         url = "{}?page={}".format(start_url, str(i))
         html = get_html(url)
         print(html)
-        get_articles(html['text'])
+        get_articles(html)
 
 if __name__ == '__main__':
     collect_pages(page = 23)
