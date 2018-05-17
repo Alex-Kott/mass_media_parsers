@@ -29,23 +29,22 @@ def get_articles(html):
     # db = connect()
     for articles in bs.find_all("div", class_="card__headline"):
         link = "{}{}".format("https://www.huffingtonpost.com", articles.find("a").attrs['href']) 
-        print(link)
-        # title = articles.text
-        # html = get_html(link)
-        # bs = BeautifulSoup(html.text, "html.parser")
-        # article = bs.find("div", class_="entry__text js-entry-text bn-entry-text yr-entry-text")
-        # try:
-        #     body = [x.text for x in article.find_all('p')]
-        # except Exception:
-        #     pass
+        title = articles.text
+        html = get_html(link)
+        bs = BeautifulSoup(html.text, "html.parser")
+        article = bs.find("div", class_="entry__text js-entry-text bn-entry-text yr-entry-text")
+        try:
+            body = [x.text for x in article.find_all('p')]
+        except Exception:
+            pass
 
-        # article_time = bs.find('span', class_="timestamp__date--published")
-        # date = dateparser.parse(article_time.text) if article_time.text else None
-        # date = str(date.date()) 
+        article_time = bs.find('span', class_="timestamp__date--published")
+        date = dateparser.parse(article_time.text) if article_time.text else None
+        date = str(date.date()) 
 
-        # art = {"link" : link, "title" : title, "issue_date" : date, "text" : body}
-        # # db.huffpost.save(art)
-        # doc.append(art)
+        art = {"link" : link, "title" : title, "issue_date" : date, "text" : body}
+        # db.huffpost.save(art)
+        doc.append(art)
     return doc
 
 
