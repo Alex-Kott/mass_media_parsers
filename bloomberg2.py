@@ -19,6 +19,9 @@ if __name__ == "__main__":
 			h1 = item.find("h1")
 			url = h1.a['href']
 
+			if url.find('/audio/') != -1:
+				continue
+
 			news_page = req.get(url)
 			news_soup = BeautifulSoup(news_page.text, "lxml")
 			article_timestamp = news_soup.find("time", class_="article-timestamp")
