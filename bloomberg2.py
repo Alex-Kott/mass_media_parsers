@@ -13,30 +13,36 @@ if __name__ == "__main__":
 			'page': i
 		}
 		page = req.get(url, params=params)
+		print(page.url)
 		soup = BeautifulSoup(page.text, "lxml")
 
 		for item in soup.find_all(class_="search-result"):
-			h1 = item.find("h1")
-			url = h1.a['href']
+			try:
+				h1 = item.find("h1")
+				news_url = h1.a['href']
 
-			if url.find('/audio/') != -1:
+				if news_url.find('/audio/') != -1:
+					continue
+
+				news_page = req.get(news_url)
+				news_soup = BeautifulSoup(news_page.text, "lxml")
+				article_timestamp = news_soup.find("time", class_="article-timestamp")
+				datetime = article_timestamp['datetime']
+
+				text = ''
+				fence_body = news_soup.find("div", class_="fence-body")
+				for p in fence_body.find_all("p"):
+					text += p.text
+
+				dataset.append({
+					'url': news_url,
+					'date': datetime,
+					'text': text
+					})
+			except:
 				continue
 
-			news_page = req.get(url)
-			news_soup = BeautifulSoup(news_page.text, "lxml")
-			article_timestamp = news_soup.find("time", class_="article-timestamp")
-			datetime = article_timestamp['datetime']
-
-			text = ''
-			fence_body = news_soup.find("div", class_="fence-body")
-			for p in fence_body.find_all("p"):
-				text += p.text
-
-		dataset.append({
-			'url': url,
-			'date': datetime,
-			'text': text
-			})
+		
 
 	with open('bloomberg.pkl', 'wb') as f:
 		pickle.dump(dataset, f)
